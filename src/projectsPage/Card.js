@@ -1,7 +1,8 @@
-import { Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Center, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-const Card = ({ title, description, imageSrc }) => {
+const Card = ({ title, description, imageSrc, id }) => {
+  const position = `${50*id}% center`
   return (
     <VStack
       alignItems="left"
@@ -9,11 +10,17 @@ const Card = ({ title, description, imageSrc }) => {
       textColor="black"
       style={{borderRadius: '16px', overflow: 'hidden'}}
       justifyContent='space-between'
+      width="45vmin"
+      height="100vmin"
     >
       <Image
         src={imageSrc}
         alt={title}
-        style={{ borderRadius: '16px' }}
+        style={{ width:'45vmin', height:'70vmin', objectFit:'cover',objectPosition:{position}, userSelect:'none'}}
+        overflow='hidden'
+        draggable='false'
+        className="image"
+        id = {id}
       />
       <Heading padding='16px'>
         {title}

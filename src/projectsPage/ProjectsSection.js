@@ -1,62 +1,160 @@
-import React from "react";
+import React, { useState,useRef,useEffect } from "react";
 import FullScreenSection from "../Components/FullScreenSection";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, HStack } from "@chakra-ui/react";
 import Card from "./Card";
 
 const projects = [
   {
     title: "Cool Wave",
     description:
-      "Cool little svg wave transition between sections (idk what to put here I'm barely starting)",
-    getImageSrc: () => require("../images/photo1.jpg"),
+      "Cool little svg wave transition between sections (this is just padding) (picture by Silas Baisch)",
+    getImageSrc: () => require("../images/silas-baisch-wave.jpg"),
   },
   {
     title: "Infinite Scroll",
     description:
-      "A scrollable project section with parallax effect, soon to be implemented 🔥️",
-    getImageSrc: () => require("../images/photo2.jpg"),
+      "A scrollable project section with parallax effect, soon to be implemented 🔥️ (picture by jason fitt)",
+    getImageSrc: () => require("../images/jason-fitt-infinite.jpg"),
   },
   {
     title: "Dropdown Menu",
     description:
-      "A Nice and smooth dropdown menu which totally allows you to choose your own settings",
-    getImageSrc: () => require("../images/photo3.jpg"),
+      "A dropdown menu which totally allows you to choose your own settings (picture by foo visuals)",
+    getImageSrc: () => require("../images/foo-visuals-menu.jpg"),
   },
   {
     title: "Cool letter effect",
     description:
-      "A nice little effect on the bio of the landing page, displayed on hover... (don't see more there isn't anything yet)",
-    getImageSrc: () => require("../images/photo4.jpg"),
+      "A nice little effect on the bio of the landing page, displayed on hover... (picture by Florian Olivo)",
+    getImageSrc: () => require("../images/florian-olivo-coolText.jpg"),
   },
 ];
 
 
 const ProjectsSection = () => {
+  const trackRef = useRef(null);
+
+  const [id0, setId0] = useState(0)
+  const [id1, setId1] = useState(1)
+  const [id2, setId2] = useState(1)
+  const [id3, setId3] = useState(2)
+  const [mouseDownAt, setMouseDownAt] = useState("0");
+  const [prevPercentage, setPrevPercentage] = useState(0);
+  const [percentage, setPercentage] = useState(0);
+
+  const handleOnDown = e => setMouseDownAt(e.clientX);
+
+  const handleOnUp = () => {
+    setMouseDownAt("0");  
+    setPrevPercentage(percentage);
+  };
+
+  const handleOnMove = e => {
+    if(mouseDownAt === "0") return;
+    
+    const mouseDelta = parseFloat(mouseDownAt) - e.clientX,
+          maxDelta = window.innerWidth / 2;
+    const percentageUsed = (mouseDelta / maxDelta) * -100;
+
+    const nextPercentage = parseFloat(prevPercentage) + percentageUsed;
+    
+    if (nextPercentage<-100){
+      setId0((id0)<2? id0+1 : 0)
+      setId1((id1)<2? id1+1 : 0)
+      setId2((id2)<2? id2+1 : 0)
+      setId3((id3)<2? id3+1 : 0)
+      setPercentage(nextPercentage+100)
+    }else if(nextPercentage>100){
+      setId0((id0)>0? id0-1 : 2)
+      setId1((id1)>0? id1-1 : 2)
+      setId2((id2)>0? id2-1 : 2)
+      setId3((id3)>0? id3-1 : 2)
+      setPercentage(nextPercentage-100)
+    }else{
+      setPercentage(nextPercentage)
+    }
+
+    trackRef.current.animate({
+      transform: `translateX(${percentage}%)`
+    }, { duration: 1200, fill: "forwards" });
+    
+    for(const img of trackRef.current.getElementsByClassName("image")) {
+        img.animate({
+          objectPosition: `${50*img.id + percentage}% center`
+      }, { duration: 1200, fill: "forwards" });
+    }
+  };
+
+
   return (
-    <FullScreenSection
+    <FullScreenSection 
+      onMouseUp={()=>handleOnUp()}
       backgroundColor="#576572"
       isDarkBackground
       p={8}
       alignItems="flex-start"
       spacing={8}
-      position='relative'
+      position="relative"
     >
       <Heading as="h1" id="projects-section">
         Featured Projects
       </Heading>
       <Box
-        display="grid"
-        gridTemplateColumns="repeat(4,1fr)"
-        gridGap={8}
+        ref={trackRef}
+        display="flex"
+        flexDirection="row"
+        gap={8}
+        id = "card-track"
+        onMouseDown={(e)=>handleOnDown(e)}
+        onMouseMove={(e)=>handleOnMove(e)}
+        onTouchStart={(e)=>handleOnDown(e.touches[0])}
+        onTouchEnd={(e)=>handleOnUp()}
+        onTouchMove={(e)=>handleOnMove(e.touches[0])}
       >
+        <HStack gap={8} className="cards" id ={id0}>
         {projects.map((project) => (
           <Card
             key={project.title}
             title={project.title}
             description={project.description}
             imageSrc={project.getImageSrc()}
+            id ={id0}
           />
         ))}
+        </HStack>
+        <HStack gap={8} className="cards" id ={id1}>
+        {projects.map((project) => (
+          <Card
+            key={project.title}
+            title={project.title}
+            description={project.description}
+            imageSrc={project.getImageSrc()}
+            id ={id1}
+          />
+        ))}
+        </HStack>
+        <HStack gap={8} className="cards" id ={id2}>
+        {projects.map((project) => (
+          <Card
+            key={project.title}
+            title={project.title}
+            description={project.description}
+            imageSrc={project.getImageSrc()}
+            id ={id2}
+          />
+        ))}
+        </HStack>
+        <HStack gap={8} className="cards" id ={id3}>
+        {projects.map((project) => (
+          <Card
+            key={project.title}
+            title={project.title}
+            description={project.description}
+            imageSrc={project.getImageSrc()}
+            id ={id3}
+          />
+        ))}
+        </HStack>
       </Box>
       <div class="waves">
           <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
